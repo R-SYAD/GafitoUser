@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Gafito User</string>
+    <string name="title_activity_show_qractivity">ShowQRActivity</string>
+    <string name="title_activity_show_qr">ShowQR</string>
+    <string name="title_activity_navigation">Navigation</string>
+    <string name="txt_data_parkir">Data Parkir</string>
+    <string name="txt_laporan">Laporan</string>
+    <string name="txt_scan_qr">Scan QR</string>
+</resources>
