@@ -18,18 +18,21 @@ fun BottomBar (modifier: Modifier = Modifier){
     NavigationBar {
         val bottomNavigation = listOf(
             BottomBarItem(
-                title = stringResource(id = R.string.txt_data_parkir),
-                icon = painterResource(id = R.drawable.report)
+                title = stringResource(id = R.string.txt_home),
+                icon = painterResource( id = R.drawable.home_icon)
             ),
             BottomBarItem(
-                title = stringResource(id = R.string.txt_scan_qr),
-                icon = painterResource( id = R.drawable.qr_code_scan)
+                title = stringResource(id = R.string.txt_location),
+                icon = painterResource(id = R.drawable.location_icon)
             ),
             BottomBarItem(
-                title = stringResource(id = R.string.txt_laporan),
-                icon = painterResource(id = R.drawable.danger)
+                title = stringResource(id = R.string.txt_report),
+                icon = painterResource(id = R.drawable.report_icon)
             ),
-
+            BottomBarItem(
+                title = stringResource(id = R.string.txt_profile),
+                icon = painterResource(id = R.drawable.profile_icon)
+            ),
         )
         bottomNavigation.map{
             NavigationBarItem(selected = it.title == bottomNavigation[0].title,
