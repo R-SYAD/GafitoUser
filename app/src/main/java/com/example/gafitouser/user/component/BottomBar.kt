@@ -1,55 +1,48 @@
 package com.example.gafitouser.user.component
 
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.gafitouser.R
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.gafitouser.main.navigateTo
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
 
 @Composable
-fun BottomBar (modifier: Modifier = Modifier){
+fun BottomBar(selectedItem: BottomBarItem, navController: NavController) {
     NavigationBar {
-        val bottomNavigation = listOf(
-            BottomBarItem(
-                title = stringResource(id = R.string.txt_home),
-                icon = painterResource( id = R.drawable.home_icon)
-            ),
-            BottomBarItem(
-                title = stringResource(id = R.string.txt_location),
-                icon = painterResource(id = R.drawable.location_icon)
-            ),
-            BottomBarItem(
-                title = stringResource(id = R.string.txt_report),
-                icon = painterResource(id = R.drawable.report_icon)
-            ),
-            BottomBarItem(
-                title = stringResource(id = R.string.txt_profile),
-                icon = painterResource(id = R.drawable.profile_icon)
-            ),
-        )
-        bottomNavigation.map{
-            NavigationBarItem(selected = it.title == bottomNavigation[0].title,
-                onClick = { /*TODO*/ },
-                icon = { Icon(painter = it.icon, contentDescription = it.title) },
-                label= { Text(text = it.title)}
-                )
+        for (item in BottomBarItem.values()) {
+            Image(
+                painter = painterResource(id = item.icon),
+                contentDescription = item.text,
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(5.dp)
+                    .weight(1f)
+                    .clickable {
+                        navigateTo(navController, item.navDestination)
+                    },
+                colorFilter = if (item == selectedItem) ColorFilter.tint(Color.Black)
+                else ColorFilter.tint(Color.Gray)
+            )
         }
-
     }
 }
 
 @Preview
 @Composable
-fun BottomBarPreview () {
+fun BottomBarPreview() {
     GafitoUserTheme {
-        BottomBar()
+
     }
 
 }

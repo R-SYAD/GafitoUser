@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+        android:name=".GafitoUserApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,25 +16,10 @@
         android:theme="@style/Theme.GafitoUser"
         tools:targetApi="31">
         <activity
-            android:name=".user.screens.Navigation"
-            android:exported="false"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
-            android:name=".user.component.ShowQR"
-            android:exported="false"
-            android:label="@string/title_activity_show_qr"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
-            android:name=".user.component.ShowQRActivity"
-            android:exported="false"
-            android:label="@string/title_activity_show_qractivity"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.GafitoUser">
+            android:theme="@style/Theme.GafitoUser"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
