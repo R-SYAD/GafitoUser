@@ -13,24 +13,9 @@
         android:theme="@style/Theme.GafitoUser"
         tools:targetApi="31">
         <activity
-            android:name=".user.screens.Navigation"
-            android:exported="false"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
-            android:name=".user.component.ShowQR"
-            android:exported="false"
-            android:label="@string/title_activity_show_qr"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
-            android:name=".user.component.ShowQRActivity"
-            android:exported="false"
-            android:label="@string/title_activity_show_qractivity"
-            android:theme="@style/Theme.GafitoUser" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="gafito"
             android:theme="@style/Theme.GafitoUser">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +23,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="gafito" />
+
+
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+
 
 </manifest>

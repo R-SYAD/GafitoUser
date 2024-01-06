@@ -28,7 +28,7 @@ fun TopBarPreview () {
 @Composable
 fun TopBar() {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +37,7 @@ fun TopBar() {
     ) {
         Image(
             modifier = Modifier
-                .size(80.dp),
+                .size(64.dp),
             painter = painterResource(id = R.drawable.gafito_logo_text),
             contentDescription = null
         )

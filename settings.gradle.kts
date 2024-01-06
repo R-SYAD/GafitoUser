@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Gafito User"
 include(":app")
- 

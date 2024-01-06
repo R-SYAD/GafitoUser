@@ -1,4 +1,4 @@
-package com.example.gafitouser.user.component.ui.frontend
+package com.example.gafitouser.frontend
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.gafitouser.user.component.BottomBar
+import com.example.gafitouser.user.component.GafitoLocation
 import com.example.gafitouser.user.component.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportPage() {
+fun LocationPage() {
     Scaffold(
         topBar = { TopBar() },
         bottomBar = { BottomBar() }
@@ -33,13 +34,13 @@ fun ReportPage() {
 //                .padding(bottom = 32.dp)
 
         )  {
-
+            GafitoLocation()
         }
     }
 }
 
 @Preview
 @Composable
-fun ReportPagePreview() {
-    ReportPage()
+fun LocationPagePreview() {
+    LocationPage()
 }

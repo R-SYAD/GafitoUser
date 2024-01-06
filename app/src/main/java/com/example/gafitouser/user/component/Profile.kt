@@ -31,7 +31,7 @@ import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 @Composable
 fun PhotoProfile() {
     Image(
-        painter = painterResource(id = R.drawable.photoprofile),
+        painter = painterResource(id = R.drawable.motor),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = Modifier
@@ -74,8 +74,8 @@ fun DetailProfil() {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = label)
-                        Text(text = value)
+                        Text(text = label, color = Color.Black)
+                        Text(text = value, color = Color.Black)
                     }
                 }
             }
@@ -84,30 +84,6 @@ fun DetailProfil() {
 
 }
 
-//@Composable
-//fun NavBack() {
-//    Column(modifier = Modifier.padding(16.dp)) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .width(IntrinsicSize.Min)
-//                .wrapContentWidth(align = Alignment.Start),
-////            verticalAlignment = Alignment.CenterVertically,
-////            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            Icon(
-//                imageVector = Icons.Outlined.ArrowBack,
-//                contentDescription = null,
-//                modifier = Modifier.size(24.dp)
-//            )
-//            Text(
-//                text = "Back",
-//                modifier = Modifier
-//                    .padding(start = 8.dp)
-//            )
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable
