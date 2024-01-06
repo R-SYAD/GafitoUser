@@ -13,20 +13,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.example.gafitouser.GafitoViewModel
+import com.example.gafitouser.main.CommonProgressSpinner
 import com.example.gafitouser.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.DetailProfil
 import com.example.gafitouser.user.component.TopBar
-
+import com.example.gafitouser.user.models.BottomBarItem
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfilePage() {
-    Scaffold (
+fun ProfilePage(navController: NavController, vm: GafitoViewModel) {
+
+    val isLoading = vm.inProgress.value
+
+    Scaffold(
         topBar = { TopBar() },
-        bottomBar = { BottomBar() }
-    ){
-            paddingValues ->
+        bottomBar = {
+            BottomBar(
+                selectedItem = BottomBarItem.PROFILE,
+                navController = navController
+            )
+        }
+    ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -35,17 +45,17 @@ fun ProfilePage() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primary)
 //                .padding(bottom = 32.dp)
-
         ) {
-            DetailProfil()
+            DetailProfil(navController, vm)
         }
     }
+    if (isLoading)
+        CommonProgressSpinner()
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ProfilePagePreview() {
     GafitoUserTheme {
-        ProfilePage()
     }
 }

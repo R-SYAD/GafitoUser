@@ -19,23 +19,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.PhotoProfile
 import com.example.gafitouser.user.component.QrCodeImage
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
-
+import com.example.gafitouser.user.models.BottomBarItem
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowQrPage() {
+fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
+    val userData = vm.userData.value
+
     Scaffold(
         topBar = { TopBar() },
-        bottomBar = { BottomBar() }
-    ) {
-            paddingValues ->
+        bottomBar = {
+            BottomBar(
+                selectedItem = BottomBarItem.HOME,
+                navController = navController
+            )
+        }
+    ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,7 +53,7 @@ fun ShowQrPage() {
                 .background(MaterialTheme.colorScheme.primary)
 //                .padding(bottom = 32.dp)
 
-        )  {
+        ) {
             Box(
                 modifier = Modifier
                     .padding(8.dp)
@@ -59,7 +67,7 @@ fun ShowQrPage() {
                         .fillMaxWidth()
                         .padding(32.dp)
                 ) {
-                    PhotoProfile()
+                    PhotoProfile(userData?.imageUrl) {}
 //                    Spacer(modifier = Modifier.height(8.dp))
                     QrCodeImage(content = "BA 1678 DA", size = 300.dp)
 
@@ -70,11 +78,9 @@ fun ShowQrPage() {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 fun ShowQrPagePreview() {
     GafitoUserTheme {
-        ShowQrPage()
     }
 }
