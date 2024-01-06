@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "574694477115",
+    "project_id": "gafito-4a776",
+    "storage_bucket": "gafito-4a776.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574694477115:android:294e108edf948a15257b1e",
+        "android_client_info": {
+          "package_name": "com.example.gafitouser"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCbdUZ7lt0YHV_yzFlpSeE1ge5z7DgA08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
