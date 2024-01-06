@@ -37,7 +37,7 @@ fun TopBar() {
     ) {
         Image(
             modifier = Modifier
-                .size(80.dp),
+                .size(64.dp),
             painter = painterResource(id = R.drawable.gafito_logo_text),
             contentDescription = null
         )

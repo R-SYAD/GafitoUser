@@ -21,7 +21,6 @@ import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.DetailProfil
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.models.BottomBarItem
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +45,6 @@ fun ProfilePage(navController: NavController, vm: GafitoViewModel) {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.primary)
 //                .padding(bottom = 32.dp)
-
         ) {
             DetailProfil(navController, vm)
         }

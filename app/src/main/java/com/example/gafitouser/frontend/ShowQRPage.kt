@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.PhotoProfile
-import com.example.gafitouser.user.component.Qr
+import com.example.gafitouser.user.component.QrCodeImage
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
@@ -69,7 +69,8 @@ fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
                 ) {
                     PhotoProfile(userData?.imageUrl) {}
 //                    Spacer(modifier = Modifier.height(8.dp))
-                    Qr()
+                    QrCodeImage(content = "BA 1678 DA", size = 300.dp)
+
                 }
             }
         }

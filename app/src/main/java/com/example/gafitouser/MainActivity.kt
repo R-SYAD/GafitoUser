@@ -8,18 +8,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gafitouser.frontend.auth.LoginScreen
-import com.example.gafitouser.frontend.auth.SignupScreen
-import com.example.gafitouser.main.NotificationMessage
 import com.example.gafitouser.frontend.LocationPage
 import com.example.gafitouser.frontend.ProfilePage
 import com.example.gafitouser.frontend.ReportPage
 import com.example.gafitouser.frontend.ShowQrPage
+import com.example.gafitouser.frontend.auth.LoginScreen
+import com.example.gafitouser.frontend.auth.SignupScreen
+import com.example.gafitouser.main.NotificationMessage
 import com.example.gafitouser.ui.theme.GafitoUserTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -76,13 +75,5 @@ fun GafitoApp() {
         composable(DestinationScreen.Profile.route) {
             ProfilePage(navController = navController, vm = vm)
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GafitoUserTheme {
-        GafitoApp()
     }
 }

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     //
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
@@ -61,7 +62,7 @@ dependencies {
     implementation ("androidx.navigation:navigation-compose:2.4.0-alpha01")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -74,6 +75,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -107,4 +109,23 @@ dependencies {
 
     // coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC")
+
+    implementation ("com.google.zxing:core:3.4.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    // maps compose
+    implementation ("com.google.maps.android:maps-compose:2.11.5")
+
+    // google map services
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    // google maps utils
+    implementation ("com.google.maps.android:android-maps-utils:3.4.0")
+    implementation ("com.google.maps.android:maps-ktx:5.0.0")
+
+    //Navigation
+    implementation ("androidx.navigation:navigation-compose:2.7.6")
+
+
 }
