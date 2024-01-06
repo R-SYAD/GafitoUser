@@ -13,13 +13,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gafitouser.auth.LoginScreen
-import com.example.gafitouser.auth.SignupScreen
+import com.example.gafitouser.frontend.auth.LoginScreen
+import com.example.gafitouser.frontend.auth.SignupScreen
 import com.example.gafitouser.main.NotificationMessage
-import com.example.gafitouser.screen.LocationPage
-import com.example.gafitouser.screen.ProfilePage
-import com.example.gafitouser.screen.ReportPage
-import com.example.gafitouser.screen.ShowQrPage
+import com.example.gafitouser.frontend.LocationPage
+import com.example.gafitouser.frontend.ProfilePage
+import com.example.gafitouser.frontend.ReportPage
+import com.example.gafitouser.frontend.ShowQrPage
 import com.example.gafitouser.ui.theme.GafitoUserTheme
 import dagger.hilt.android.AndroidEntryPoint
 

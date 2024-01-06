@@ -7,7 +7,8 @@ data class UserData (
     var imageUrl: String? = null,
     var noPolisi: String? = null,
     var jenisMotor: String? = null,
-    var noHP: String? = null
+    var noHP: String? = null,
+    var role: String = "user"
 ) {
     fun toMap() = mapOf(
         "userId" to userId,
@@ -16,6 +17,7 @@ data class UserData (
         "imageUrl" to imageUrl,
         "noPolisi" to noPolisi,
         "jenisMotor" to jenisMotor,
-        "noHP" to noHP
+        "noHP" to noHP,
+        "role" to role
     )
 }

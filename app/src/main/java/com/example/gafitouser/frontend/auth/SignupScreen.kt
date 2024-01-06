@@ -1,4 +1,4 @@
-package com.example.gafitouser.auth
+package com.example.gafitouser.frontend.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -38,8 +38,8 @@ import com.example.gafitouser.main.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController, vm: GafitoViewModel) {
-    
+fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
+
     CheckSignedIn(navController = navController, vm = vm)
 
     val focus = LocalFocusManager.current
@@ -52,11 +52,13 @@ fun LoginScreen(navController: NavController, vm: GafitoViewModel) {
                 rememberScrollState()
             ),
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+            ) {
+            val usernameState = remember { mutableStateOf(TextFieldValue()) }
             val emailState = remember { mutableStateOf(TextFieldValue()) }
             val passState = remember { mutableStateOf(TextFieldValue()) }
-            
-            Image(painter = painterResource(id = R.drawable.gafito),
+
+            Image(
+                painter = painterResource(id = R.drawable.gafito),
                 contentDescription = null,
                 modifier = Modifier
                     .width(250.dp)
@@ -64,16 +66,22 @@ fun LoginScreen(navController: NavController, vm: GafitoViewModel) {
                     .padding(8.dp)
             )
             Text(
-                text = "Login",
+                text = "Sign Up",
                 modifier = Modifier.padding(8.dp),
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif
             )
             OutlinedTextField(
+                value = usernameState.value,
+                onValueChange = { usernameState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "Username") }
+            )
+            OutlinedTextField(
                 value = emailState.value,
                 onValueChange = { emailState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "Email")}
+                label = { Text(text = "Email") }
             )
             OutlinedTextField(
                 value = passState.value,
@@ -85,16 +93,20 @@ fun LoginScreen(navController: NavController, vm: GafitoViewModel) {
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
-                    vm.onLogin(emailState.value.text, passState.value.text)
+                          vm.onSignup(
+                              usernameState.value.text,
+                              emailState.value.text,
+                              passState.value.text
+                          )
                 },
                 modifier = Modifier.padding(8.dp)
             ) {
-                Text(text = "Login")
+                Text(text = "Sign Up")
             }
-            Text(text = "New here? Go to sign up", color = Color.Blue, modifier = Modifier
+            Text(text = "Already have an account?", color = Color.Blue, modifier = Modifier
                 .padding(8.dp)
                 .clickable {
-                    navigateTo(navController, DestinationScreen.Signup)
+                    navigateTo(navController, DestinationScreen.Login)
                 }
             )
         }

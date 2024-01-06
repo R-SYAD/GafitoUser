@@ -59,13 +59,15 @@ fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
     val noPolisiDisplay = userData?.noPolisi ?: ""
     val jenisMotorDisplay = userData?.jenisMotor ?: ""
     val noHpDisplay = userData?.noHP ?: ""
+    val roleDisplay = userData?.role ?: ""
 
     val data = listOf(
         "Nama" to nameDisplay,
         "Username" to usernameDisplay,
         "Nomor Polisi" to noPolisiDisplay,
         "Jenis Motor" to jenisMotorDisplay,
-        "No Hp" to noHpDisplay
+        "No Hp" to noHpDisplay,
+        "role" to roleDisplay
     )
     Column {
         Box(

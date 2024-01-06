@@ -1,4 +1,4 @@
-package com.example.gafitouser.screen
+package com.example.gafitouser.frontend
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,17 +15,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.user.component.BottomBar
+import com.example.gafitouser.user.component.DetailProfil
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.models.BottomBarItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportPage(navController: NavController, vm: GafitoViewModel) {
+fun LocationPage(navController: NavController, vm: GafitoViewModel) {
     Scaffold(
         topBar = { TopBar() },
         bottomBar = {
             BottomBar(
-                selectedItem = BottomBarItem.REPORT,
+                selectedItem = BottomBarItem.LOCATION,
                 navController = navController
             )
         }
@@ -40,12 +41,12 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
 //                .padding(bottom = 32.dp)
 
         ) {
-
+            DetailProfil(navController, vm)
         }
     }
 }
 
 @Preview
 @Composable
-fun ReportPagePreview() {
+fun LocationPagePreview() {
 }
