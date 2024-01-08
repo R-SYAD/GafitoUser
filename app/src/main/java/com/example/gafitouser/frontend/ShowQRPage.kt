@@ -34,6 +34,7 @@ import com.example.gafitouser.user.models.BottomBarItem
 @Composable
 fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
     val userData = vm.userData.value
+    val noPolisiDisplay = userData?.noPolisi ?: ""
 
     Scaffold(
         topBar = { TopBar() },
@@ -69,7 +70,7 @@ fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
                 ) {
                     PhotoProfile(userData?.imageUrl) {}
 //                    Spacer(modifier = Modifier.height(8.dp))
-                    QrCodeImage(content = "BA 1678 DA", size = 300.dp)
+                    QrCodeImage(content = noPolisiDisplay , size = 300.dp)
 
                 }
             }
