@@ -16,26 +16,45 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gafitouser.ui.theme.GafitoUserTheme
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.tasks.await
 import java.util.Locale
+
+
+fun checkForPermission(context: Context): Boolean {
+    return !(ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        context,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) != PackageManager.PERMISSION_GRANTED)
+}
 
 @Composable
 fun MainScreen() {
@@ -51,8 +70,9 @@ fun MainScreen() {
     var markedLatitude by remember { mutableStateOf("") }
     var markedLongitude by remember { mutableStateOf("") }
     var markedLocationName by remember { mutableStateOf("") }
+    var isLocationMarked by remember { mutableStateOf(false) }
 
-    DisposableEffect(context) {
+    LaunchedEffect(true) {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
         ) {
@@ -61,18 +81,17 @@ fun MainScreen() {
 
             // Periksa apakah layanan lokasi telah diaktifkan
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        if (location != null) {
-                            currentLocation = LatLng(location.latitude, location.longitude)
-                            isLocationLoaded = true
-                        } else {
-                            Log.e("MainScreen", "Last known location is null")
-                        }
+                try {
+                    val location = fusedLocationClient.lastLocation.await()
+                    if (location != null) {
+                        currentLocation = LatLng(location.latitude, location.longitude)
+                        isLocationLoaded = true
+                    } else {
+                        Log.e("MainScreen", "Last known location is null")
                     }
-                    .addOnFailureListener { e ->
-                        Log.e("MainScreen", "Error getting location", e)
-                    }
+                } catch (e: Exception) {
+                    Log.e("MainScreen", "Error getting location", e)
+                }
             } else {
                 // Jika layanan lokasi tidak diaktifkan, tampilkan dialog untuk mengaktifkannya
                 context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
@@ -80,11 +99,7 @@ fun MainScreen() {
         } else {
             Log.e("MainScreen", "Location permission not granted")
         }
-        onDispose {
-            // Cleanup, if needed
-        }
     }
-
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -134,36 +149,60 @@ fun MainScreen() {
 
             }
 
-            // Tombol "Mark Location"
-            Button(
-                onClick = {
-                    // Menyimpan data latitude dan longitude yang ditandai
-                    markedLatitude = currentLocation.latitude.toString()
-                    markedLongitude = currentLocation.longitude.toString()
-                    markedLocationName = getLocationName(context, currentLocation.latitude, currentLocation.longitude)
-
-
-                    // Tambahkan logika lain jika diperlukan
-                    Log.d("MarkLocation", "Location marked!")
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                Text("Mark Location")
-            }
-
-            // Menampilkan latitude dan longitude yang ditandai
-            if (isLocationLoaded) {
+            if (isLocationMarked) {
+                // Menampilkan latitude dan longitude yang ditandai
                 Text(
                     text = "Location : $markedLocationName",
                     style = typography.bodyMedium,
                     modifier = Modifier
                         .padding(top = 8.dp)
                 )
+
+                // Tombol Hapus Lokasi
+                IconButton(
+                    onClick = {
+                        // Logika untuk menghapus lokasi yang ditandai
+                        isLocationMarked = false
+                        markedLatitude = ""
+                        markedLongitude = ""
+                        markedLocationName = ""
+                        Log.d("DeleteLocation", "Location deleted!")
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete Location"
+                    )
+                }
+            } else {
+                // Tombol "Mark Location"
+                Button(
+                    onClick = {
+                        // Menyimpan data latitude dan longitude yang ditandai
+                        markedLatitude = currentLocation.latitude.toString()
+                        markedLongitude = currentLocation.longitude.toString()
+                        markedLocationName =
+                            getLocationName(context, currentLocation.latitude, currentLocation.longitude)
+
+                        // Tandai bahwa lokasi sudah dimark
+                        isLocationMarked = true
+
+                        // Tambahkan logika lain jika diperlukan
+                        Log.d("MarkLocation", "Location marked!")
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                ) {
+                    Text("Mark Location",
+                        color = colorScheme.primary)
+                }
             }
 
-// Tombol "Find My Location"
+            // Tombol "Find My Location"
             Button(
                 onClick = {
                     if (isLocationLoaded && markedLatitude.isNotEmpty() && markedLongitude.isNotEmpty()) {
@@ -175,9 +214,11 @@ fun MainScreen() {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp),
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
             ) {
-                Text("Find My Location on Maps")
+                Text("Find My Location on Maps",
+                    color = colorScheme.primary)
             }
 
         }
@@ -193,14 +234,13 @@ private fun getLocationName(context: Context, latitude: Double, longitude: Doubl
 }
 
 
-
-
 @Composable
 fun GafitoLocation() {
-    GafitoUserTheme {
+    com.example.gafitouser.user.component.ui.theme.GafitoUserTheme {
         MainScreen()
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

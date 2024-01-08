@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,16 +38,6 @@ fun PhotoProfile(imageUrl: String?, onClick: () -> Unit) {
                 .size(100.dp),
         )
     }
-//        Image(
-//            painter = painterResource(id = R.drawable.photoprofile),
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .clip(CircleShape)
-//                .size(100.dp)
-//        )
-
-//    Spacer(modifier = Modifier.height(32.dp))
 }
 
 
@@ -74,14 +65,14 @@ fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
             modifier = Modifier
                 .padding(16.dp)
                 .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .background(colorScheme.primary, shape = RoundedCornerShape(8.dp))
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(16.dp)
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .background(colorScheme.primary, shape = RoundedCornerShape(8.dp))
             ) {
                 PhotoProfile(userData?.imageUrl){
 
@@ -94,8 +85,11 @@ fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = label)
-                        Text(text = value)
+                        Text(text = label,
+                            color = colorScheme.onSecondary)
+
+                        Text(text = value,
+                            color = colorScheme.onSecondary)
                     }
                 }
             }
@@ -103,30 +97,6 @@ fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
     }
 }
 
-//@Composable
-//fun NavBack() {
-//    Column(modifier = Modifier.padding(16.dp)) {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .width(IntrinsicSize.Min)
-//                .wrapContentWidth(align = Alignment.Start),
-////            verticalAlignment = Alignment.CenterVertically,
-////            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            Icon(
-//                imageVector = Icons.Outlined.ArrowBack,
-//                contentDescription = null,
-//                modifier = Modifier.size(24.dp)
-//            )
-//            Text(
-//                text = "Back",
-//                modifier = Modifier
-//                    .padding(start = 8.dp)
-//            )
-//        }
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable

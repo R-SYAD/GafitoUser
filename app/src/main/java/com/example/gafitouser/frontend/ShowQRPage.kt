@@ -6,8 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,48 +31,49 @@ import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
     val userData = vm.userData.value
-
-    Scaffold(
-        topBar = { TopBar() },
-        bottomBar = {
-            BottomBar(
-                selectedItem = BottomBarItem.HOME,
-                navController = navController
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary)
-//                .padding(bottom = 32.dp)
-
-        ) {
-            Box(
+        GafitoUserTheme {
+        Scaffold(
+            topBar = { TopBar() },
+            bottomBar = {
+                BottomBar(
+                    selectedItem = BottomBarItem.HOME,
+                    navController = navController
+                )
+            }
+        ) { paddingValues ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .padding(8.dp)
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(32.dp))
-                    .background(color = Color.White, shape = RoundedCornerShape(32.dp))
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp)
-                ) {
-                    PhotoProfile(userData?.imageUrl) {}
-//                    Spacer(modifier = Modifier.height(8.dp))
-                    QrCodeImage(content = "BA 1678 DA", size = 300.dp)
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.secondary)
+                //                .padding(bottom = 32.dp)
 
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .border(1.dp, Color.Black, shape = RoundedCornerShape(32.dp))
+                        .background(color = Color.White, shape = RoundedCornerShape(32.dp))
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp)
+                    ) {
+                        PhotoProfile(userData?.imageUrl) {}
+                        Spacer(modifier = Modifier.height(16.dp))
+                        QrCodeImage(content = "BA 1678 DA", size = 300.dp)
+
+                    }
                 }
             }
         }
