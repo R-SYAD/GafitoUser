@@ -40,7 +40,7 @@ fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
 
         GafitoUserTheme {
         Scaffold(
-            topBar = { TopBar() },
+            topBar = { TopBar(vm = vm) },
             bottomBar = {
                 BottomBar(
                     selectedItem = BottomBarItem.HOME,

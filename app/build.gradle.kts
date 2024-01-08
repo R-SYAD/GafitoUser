@@ -76,6 +76,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.3.0")
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.0")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -112,7 +113,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC")
 
     implementation ("com.google.zxing:core:3.4.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // maps compose
     implementation ("com.google.maps.android:maps-compose:2.11.5")
@@ -128,5 +129,12 @@ dependencies {
     //Navigation
     implementation ("androidx.navigation:navigation-compose:2.7.6")
 
+    //runtime
+    implementation ("androidx.compose.runtime:runtime:1.1.0")
 
+    implementation ("androidx.compose.runtime:runtime-livedata:1.4.3")
+
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 }

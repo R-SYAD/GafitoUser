@@ -3,7 +3,9 @@ package com.example.gafitouser
 import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import com.example.gafitouser.data.Event
 import com.example.gafitouser.data.LaporanData
 import com.example.gafitouser.data.UserData
@@ -11,21 +13,24 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.lang.Exception
 import java.util.UUID
 import javax.inject.Inject
 
 const val USERS = "users"
 const val LAPORAN = "laporan"
-
+const val PARKIR = "parkir"
 
 @HiltViewModel
 class GafitoViewModel @Inject constructor(
     val auth: FirebaseAuth,
     val db: FirebaseFirestore,
-    val storage: FirebaseStorage
+    val storage: FirebaseStorage,
 ) : ViewModel() {
 
     val signedIn = mutableStateOf(false)
@@ -33,8 +38,11 @@ class GafitoViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
 
+    var isCondition = mutableStateOf(false)
+
     val refreshLaporanProgress = mutableStateOf(false)
     val laporans = mutableStateOf<List<LaporanData>>(listOf())
+
 
     init {
 //        auth.signOut()
@@ -152,6 +160,8 @@ class GafitoViewModel @Inject constructor(
                 userData.value = user
                 inProgress.value = false
                 refreshLaporan()
+//                getCondition()
+                statusParkir()
             }
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot retrieve user data")
@@ -219,4 +229,41 @@ class GafitoViewModel @Inject constructor(
         val sortedLaporans = newLaporans.sortedByDescending { it.time }
         outState.value = sortedLaporans
     }
+
+//    fun statusParkir(noPolisi: String) {
+//        val currentUid = auth.currentUser?.uid
+//        val currentNoPolisi = userData.value?.noPolisi
+//
+//        if (currentUid != null) {
+//            val userRef = db.collection(PARKIR).whereEqualTo("noPolisi", currentNoPolisi)
+//            userRef.get().addOnSuccessListener { querySnapshot ->
+//                // Jika data user ditemukan, mengubah kondisi menjadi true
+//                if (querySnapshot.size() > 0) {
+//                    isCondition.value = true
+//                }
+//            }
+//        }
+//    }
+
+    fun statusParkir() {
+        val currentUid = auth.currentUser?.uid
+        val currentNoPolisi = userData.value?.noPolisi
+
+        inProgress.value = true
+
+        if (currentUid != null) {
+            val userRef = db.collection(PARKIR).whereEqualTo("noPolisi", currentNoPolisi)
+            userRef.get().addOnSuccessListener { querySnapshot ->
+                // Jika data user ditemukan, mengubah kondisi menjadi true
+                if (querySnapshot.size() > 0) {
+                    isCondition.value = true
+                }
+            }
+            inProgress.value = false
+        } else {
+            inProgress.value = false
+            handleException(customMessage = "There is Something Error")
+        }
+    }
+
 }

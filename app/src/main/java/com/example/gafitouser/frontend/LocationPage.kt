@@ -29,7 +29,7 @@ fun LocationPage(navController: NavController, vm: GafitoViewModel) {
         val isLoading = vm.inProgress.value
 
         Scaffold(
-            topBar = { TopBar() },
+            topBar = { TopBar(vm = vm) },
             bottomBar = { BottomBar(
                 selectedItem = BottomBarItem.LOCATION,
                 navController = navController

@@ -42,7 +42,7 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
     val laporans = vm.laporans.value
 
     Scaffold(
-        topBar = { TopBar() },
+        topBar = { TopBar(vm = vm) },
         bottomBar = {
             BottomBar(
                 selectedItem = BottomBarItem.REPORT,
