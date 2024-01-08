@@ -27,13 +27,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.R
+import com.example.gafitouser.data.LaporanData
+import com.example.gafitouser.main.CommonImage
 import com.example.gafitouser.ui.theme.Warning
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
+import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailLaporan() {
+fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: LaporanData) {
+    val waktuLaporan = laporan?.time ?: ""
+
+    val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
+    val waktu = simpleDateFormat.format(waktuLaporan)
+
+
     Box(
         //            color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
@@ -50,9 +61,8 @@ fun DetailLaporan() {
                 .padding(16.dp)
 
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.motor),
-                contentDescription = null,
+            CommonImage(
+                data = laporan.laporanImage,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .padding(16.dp)
@@ -60,7 +70,7 @@ fun DetailLaporan() {
                     .clip(CircleShape)
             )
             TextField(
-                value = "F 1 KRI",
+                value = laporan.nomorPolisi ?: "",
                 label = { Text(text = "Nomor Polisi") },
                 enabled = false,
                 onValueChange = {},
@@ -69,7 +79,7 @@ fun DetailLaporan() {
                     .fillMaxWidth()
             )
             TextField(
-                value = "Honda Vario 1000 CC",
+                value = laporan.merek ?: "",
                 label = { Text(text = "Merek Kendaraan") },
                 enabled = false,
                 onValueChange = {},
@@ -78,7 +88,7 @@ fun DetailLaporan() {
                     .fillMaxWidth()
             )
             TextField(
-                value = "Maroon Metalic",
+                value = laporan.warna ?: "",
                 label = { Text(text = "Warna Kendaraan") },
                 enabled = false,
                 onValueChange = {},
@@ -87,7 +97,7 @@ fun DetailLaporan() {
                     .fillMaxWidth()
             )
             TextField(
-                value = "19/10/2023, 04:43 PM",
+                value = waktu,
                 label = { Text(text = "Tanggal Laporan") },
                 enabled = false,
                 onValueChange = {},
@@ -97,7 +107,7 @@ fun DetailLaporan() {
 
             )
             TextField(
-                value = "Laporan Kunci Tertinggal",
+                value = laporan.description ?: "",
                 label = { Text(text = "Deskripsi Laporan") },
                 enabled = false,
                 onValueChange = {},
@@ -106,29 +116,6 @@ fun DetailLaporan() {
                     .fillMaxWidth()
 
             )
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-            ) {
-                Button(
-                    onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.buttonColors(Warning),
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(text = "Ubah")
-                }
-                Button(
-                    onClick = { /*TODO*/ },
-                    colors = ButtonDefaults.buttonColors(Color.Red),
-                    modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(text = "Hapus")
-                }
-            }
         }
     }
 }
@@ -137,6 +124,5 @@ fun DetailLaporan() {
 @Composable
 fun DetailLaporaPreview() {
     GafitoUserTheme {
-        DetailLaporan()
     }
 }

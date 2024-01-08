@@ -1,12 +1,15 @@
 package com.example.gafitouser
 
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.gafitouser.data.Event
+import com.example.gafitouser.data.LaporanData
 import com.example.gafitouser.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +18,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 const val USERS = "users"
+const val LAPORAN = "laporan"
+
 
 @HiltViewModel
 class GafitoViewModel @Inject constructor(
@@ -27,6 +32,9 @@ class GafitoViewModel @Inject constructor(
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
+
+    val refreshLaporanProgress = mutableStateOf(false)
+    val laporans = mutableStateOf<List<LaporanData>>(listOf())
 
     init {
 //        auth.signOut()
@@ -143,7 +151,7 @@ class GafitoViewModel @Inject constructor(
                 val user = it.toObject<UserData>()
                 userData.value = user
                 inProgress.value = false
-                popupNotification.value = Event("User data retrieved successfully")
+                refreshLaporan()
             }
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot retrieve user data")
@@ -181,5 +189,34 @@ class GafitoViewModel @Inject constructor(
         uploadImage(uri) {
             createOrUpdateProfile(imageUrl = it.toString())
         }
+    }
+
+    fun refreshLaporan() {
+        val currentUid = auth.currentUser?.uid
+
+        if (currentUid != null) {
+            refreshLaporanProgress.value = true
+            db.collection(LAPORAN).get()
+                .addOnSuccessListener { documents ->
+                    convertLaporan(documents, laporans)
+                    refreshLaporanProgress.value = false
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Gagal mengambil laporan")
+                    refreshLaporanProgress.value = false
+                }
+        } else {
+            handleException(customMessage = "Error! Gagal memuat laporan")
+        }
+    }
+
+    private fun convertLaporan(documents: QuerySnapshot, outState: MutableState<List<LaporanData>>) {
+        val newLaporans = mutableListOf<LaporanData>()
+        documents.forEach { doc ->
+            val laporan = doc.toObject<LaporanData>()
+            newLaporans.add(laporan)
+        }
+        val sortedLaporans = newLaporans.sortedByDescending { it.time }
+        outState.value = sortedLaporans
     }
 }
