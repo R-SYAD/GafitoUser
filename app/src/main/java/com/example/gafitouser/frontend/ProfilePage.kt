@@ -16,10 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.main.CommonProgressSpinner
-import com.example.gafitouser.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.DetailProfil
 import com.example.gafitouser.user.component.TopBar
+import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +43,7 @@ fun ProfilePage(navController: NavController, vm: GafitoViewModel) {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.secondary)
 //                .padding(bottom = 32.dp)
         ) {
             DetailProfil(navController, vm)

@@ -7,19 +7,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gafitouser.frontend.LocationPage
+import com.example.gafitouser.frontend.PermissionScreen
 import com.example.gafitouser.frontend.ProfilePage
 import com.example.gafitouser.frontend.ReportPage
 import com.example.gafitouser.frontend.ShowQrPage
 import com.example.gafitouser.frontend.auth.LoginScreen
 import com.example.gafitouser.frontend.auth.SignupScreen
 import com.example.gafitouser.main.NotificationMessage
-import com.example.gafitouser.ui.theme.GafitoUserTheme
+import com.example.gafitouser.user.component.checkForPermission
+import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,12 +39,24 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GafitoApp()
+                    // Use a mutable State variable for read-write access
+                    var hasLocationPermission by remember { mutableStateOf(checkForPermission(this)) }
+
+                    if (hasLocationPermission) {
+                        GafitoApp()
+                    } else {
+                        PermissionScreen {
+                            // Update the state properly within a composable
+                            hasLocationPermission = true
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+
 
 sealed class DestinationScreen(val route: String) {
     object Signup: DestinationScreen("signup")

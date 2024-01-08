@@ -17,32 +17,34 @@ import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.user.component.BottomBar
 import com.example.gafitouser.user.component.GafitoLocation
 import com.example.gafitouser.user.component.TopBar
+import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPage(navController: NavController, vm: GafitoViewModel) {
-    val isLoading = vm.inProgress.value
+    // Gunakan GafitoUserTheme sebagai wrapper
 
-    Scaffold(
-        topBar = { TopBar() },
-        bottomBar = { BottomBar(
-            selectedItem = BottomBarItem.REPORT,
-            navController = navController
-        ) }
-    ) {
-            paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary)
-//                .padding(bottom = 32.dp)
+    GafitoUserTheme {
+        val isLoading = vm.inProgress.value
 
-        )  {
-            GafitoLocation()
+        Scaffold(
+            topBar = { TopBar() },
+            bottomBar = { BottomBar(
+                selectedItem = BottomBarItem.LOCATION,
+                navController = navController
+            ) }
+        ) { paddingValues ->
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primary)
+            ) {
+                GafitoLocation()
+            }
         }
     }
 }
@@ -50,4 +52,8 @@ fun LocationPage(navController: NavController, vm: GafitoViewModel) {
 @Preview
 @Composable
 fun LocationPagePreview() {
+    // Gunakan GafitoUserTheme sebagai wrapper
+    GafitoUserTheme {
+    }
 }
+
