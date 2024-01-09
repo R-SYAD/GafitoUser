@@ -2,18 +2,14 @@
 
 package com.example.gafitorsatpam.component.laporanComp
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,17 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.gafitouser.GafitoViewModel
-import com.example.gafitouser.R
 import com.example.gafitouser.data.LaporanData
 import com.example.gafitouser.main.CommonImage
-import com.example.gafitouser.ui.theme.Warning
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import java.text.SimpleDateFormat
 
@@ -71,7 +64,8 @@ fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: La
             )
             TextField(
                 value = laporan.nomorPolisi ?: "",
-                label = { Text(text = "Nomor Polisi") },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondary),
+                label = { Text(text = "Nomor Polisi", color =  MaterialTheme.colorScheme.onSecondary) },
                 enabled = false,
                 onValueChange = {},
                 modifier = Modifier
@@ -80,7 +74,8 @@ fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: La
             )
             TextField(
                 value = laporan.merek ?: "",
-                label = { Text(text = "Merek Kendaraan") },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondary),
+                label = { Text(text = "Merek Kendaraan", color =  MaterialTheme.colorScheme.onSecondary) },
                 enabled = false,
                 onValueChange = {},
                 modifier = Modifier
@@ -89,7 +84,8 @@ fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: La
             )
             TextField(
                 value = laporan.warna ?: "",
-                label = { Text(text = "Warna Kendaraan") },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondary),
+                label = { Text(text = "Warna Kendaraan", color =  MaterialTheme.colorScheme.onSecondary) },
                 enabled = false,
                 onValueChange = {},
                 modifier = Modifier
@@ -98,7 +94,8 @@ fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: La
             )
             TextField(
                 value = waktu,
-                label = { Text(text = "Tanggal Laporan") },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondary),
+                label = { Text(text = "Tanggal Laporan", color =  MaterialTheme.colorScheme.onSecondary) },
                 enabled = false,
                 onValueChange = {},
                 modifier = Modifier
@@ -108,7 +105,8 @@ fun DetailLaporan(navController: NavController, vm: GafitoViewModel, laporan: La
             )
             TextField(
                 value = laporan.description ?: "",
-                label = { Text(text = "Deskripsi Laporan") },
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSecondary),
+                label = { Text(text = "Deskripsi Laporan", color =  MaterialTheme.colorScheme.onSecondary) },
                 enabled = false,
                 onValueChange = {},
                 modifier = Modifier

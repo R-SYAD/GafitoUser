@@ -1,21 +1,21 @@
 package com.example.gafitouser.frontend
 
+//import com.example.gafitorsatpam.component.laporanComp.LaporanList
 import android.annotation.SuppressLint
-import android.os.Parcel
-import android.os.Parcelable
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,9 +28,8 @@ import com.example.gafitouser.user.component.ListLaporanView
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
-//import com.example.gafitorsatpam.component.laporanComp.LaporanList
-import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -55,6 +54,7 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(paddingValues)
+                .background(MaterialTheme.colorScheme.secondary)
 
         ) {
 //        your code compose here

@@ -136,6 +136,10 @@ fun MainScreen() {
                             text = "Long: ${currentLocation.longitude}",
                             style = typography.bodyMedium
                         )
+                        Text(
+                            text = "Location : ${getLocationName(context, currentLocation.latitude, currentLocation.longitude)}",
+                            style = typography.bodyMedium
+                        )
                     }
                 } else {
                     Text(

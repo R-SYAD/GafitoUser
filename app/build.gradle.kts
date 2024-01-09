@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -127,6 +125,14 @@ dependencies {
 
     //Navigation
     implementation ("androidx.navigation:navigation-compose:2.7.6")
+
+    implementation ("com.google.firebase:firebase-firestore:24.10.0")
+    implementation ("androidx.core:core-ktx:1.12.0")
+    implementation (platform("com.google.firebase:firebase-bom:30.0.1"))
+    implementation ("com.google.firebase:firebase-messaging-ktx")
+
+
+// Use the latest version
 
 
 }

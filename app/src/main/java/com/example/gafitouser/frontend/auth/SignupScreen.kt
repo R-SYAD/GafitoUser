@@ -56,6 +56,7 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
             val usernameState = remember { mutableStateOf(TextFieldValue()) }
             val emailState = remember { mutableStateOf(TextFieldValue()) }
             val passState = remember { mutableStateOf(TextFieldValue()) }
+            val noPolisiState  = remember { mutableStateOf(TextFieldValue()) }
 
             Image(
                 painter = painterResource(id = R.drawable.gafito),
@@ -88,6 +89,13 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 onValueChange = { passState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Password") },
+                visualTransformation = PasswordVisualTransformation()
+            )
+            OutlinedTextField(
+                value = noPolisiState.value,
+                onValueChange = { noPolisiState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "No Polisi") },
                 visualTransformation = PasswordVisualTransformation()
             )
             Button(

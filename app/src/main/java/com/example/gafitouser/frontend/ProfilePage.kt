@@ -44,7 +44,6 @@ fun ProfilePage(navController: NavController, vm: GafitoViewModel) {
                 .padding(paddingValues)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.secondary)
-//                .padding(bottom = 32.dp)
         ) {
             DetailProfil(navController, vm)
         }
