@@ -58,10 +58,12 @@ class GafitoViewModel @Inject constructor(
 //        auth.signOut()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
+
         currentUser?.uid?.let { uid ->
             getUserData(uid)
+
             getUserParkir(uid)
-        }
+            }
     }
 
     fun onSignup(
@@ -113,11 +115,30 @@ class GafitoViewModel @Inject constructor(
         auth.signInWithEmailAndPassword(email, pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    signedIn.value = true
-                    inProgress.value = false
                     auth.currentUser?.uid?.let { uid ->
-                        handleException(customMessage = "Login Success")
+                        inProgress.value = false
                         getUserData(uid)
+                        // Cek role setelah login berhasil
+                        db.collection(USERS).document(uid).get()
+                            .addOnSuccessListener {
+                                inProgress.value = true
+                                val user = it.toObject<UserData>()
+                                if (user?.role == "user") {
+                                    signedIn.value = true
+                                    inProgress.value = false
+                                    // Role valid, lanjutkan navigasi
+                                    handleException(customMessage = "Login Success")
+                                } else {
+                                    inProgress.value = false
+                                    // Role tidak valid, logout pengguna
+                                    handleException(customMessage = "Akun anda tidak ditemukan")
+                                    auth.signOut()
+                                }
+                            }
+                            .addOnFailureListener { exc ->
+                                handleException(exc, "Cannot retrieve user data")
+                                inProgress.value = false
+                            }
                     }
 //                    userParkir
                 } else {

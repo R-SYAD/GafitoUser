@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -86,7 +87,10 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 value = emailState.value,
                 onValueChange = { emailState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "Email") }
+                label = { Text(text = "Email") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Email
+                )
             )
             OutlinedTextField(
                 value = passState.value,
@@ -101,18 +105,27 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 onValueChange = { nameState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Nama") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                )
             )
             OutlinedTextField(
                 value = jenisMotorState.value,
                 onValueChange = { jenisMotorState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Merek Motor") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                )
             )
             OutlinedTextField(
                 value = noHPState.value,
                 onValueChange = { noHPState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "No HP") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                )
             )
             Button(
                 onClick = {
