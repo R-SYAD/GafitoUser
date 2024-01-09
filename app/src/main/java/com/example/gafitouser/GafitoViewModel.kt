@@ -2,8 +2,10 @@ package com.example.gafitouser
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -58,12 +60,11 @@ class GafitoViewModel @Inject constructor(
 //        auth.signOut()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
-
         currentUser?.uid?.let { uid ->
             getUserData(uid)
+//            getUserParkir(uid)
 
-            getUserParkir(uid)
-            }
+        }
     }
 
     fun onSignup(
@@ -242,6 +243,11 @@ class GafitoViewModel @Inject constructor(
         popupNotification.value = Event(message)
     }
 
+    fun handleSuccess(customMessage: String = "") {
+        val message =  "$customMessage"
+        popupNotification.value = Event(message)
+    }
+
     fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit) {
         inProgress.value = true
 
@@ -406,6 +412,7 @@ class GafitoViewModel @Inject constructor(
                                         "MarkLocation",
                                         "Location marked and updated in parkir collection!"
                                     )
+                                    handleSuccess(customMessage = "Lokasi Berhasil Ditandai")
 //                                    isLocationMarked.value = true
                                     inProgress.value = false
                                     refreshParkir()
@@ -480,6 +487,7 @@ class GafitoViewModel @Inject constructor(
                                         "Location marked and updated in parkir collection!"
                                     )
 //                                    isLocationMarked.value = false
+                                    handleSuccess(customMessage = "Tanda Lokasi Berhasil Dihapus")
                                     inProgress.value = false
                                     refreshParkir()
                                     onMarkSuccess.invoke()
