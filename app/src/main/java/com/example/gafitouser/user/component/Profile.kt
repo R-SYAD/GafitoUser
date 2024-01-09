@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
@@ -21,8 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.gafitouser.DestinationScreen
 import com.example.gafitouser.GafitoViewModel
 import com.example.gafitouser.main.UserImageCard
+import com.example.gafitouser.main.navigateTo
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 
 @Composable
@@ -45,16 +48,14 @@ fun PhotoProfile(imageUrl: String?, onClick: () -> Unit) {
 fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
     val userData = vm.userData.value
 
-    val usernameDisplay = if (userData?.username == null) "" else "@${userData.username}"
+    val noPolisiDisplay = if (userData?.noPolisi == null) "" else "${userData.noPolisi}"
     val nameDisplay = userData?.name ?: ""
-    val noPolisiDisplay = userData?.noPolisi ?: ""
     val jenisMotorDisplay = userData?.jenisMotor ?: ""
     val noHpDisplay = userData?.noHP ?: ""
     val roleDisplay = userData?.role ?: ""
 
     val data = listOf(
         "Nama" to nameDisplay,
-        "Username" to usernameDisplay,
         "Nomor Polisi" to noPolisiDisplay,
         "Jenis Motor" to jenisMotorDisplay,
         "No Hp" to noHpDisplay,
@@ -91,6 +92,12 @@ fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
                         Text(text = value,
                             color = colorScheme.onSecondary)
                     }
+                }
+                Button(onClick = {
+                    vm.onLogout()
+                    navigateTo(navController, DestinationScreen.Login)
+                }) {
+                    Text(text = "Log Out")
                 }
             }
         }

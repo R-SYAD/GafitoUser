@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -53,10 +56,12 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
             ),
             horizontalAlignment = Alignment.CenterHorizontally
             ) {
-            val usernameState = remember { mutableStateOf(TextFieldValue()) }
+            val noPolisiState = remember { mutableStateOf(TextFieldValue()) }
             val emailState = remember { mutableStateOf(TextFieldValue()) }
             val passState = remember { mutableStateOf(TextFieldValue()) }
-            val noPolisiState  = remember { mutableStateOf(TextFieldValue()) }
+            val jenisMotorState = remember { mutableStateOf(TextFieldValue()) }
+            val nameState = remember { mutableStateOf(TextFieldValue()) }
+            val noHPState = remember { mutableStateOf(TextFieldValue()) }
 
             Image(
                 painter = painterResource(id = R.drawable.gafito),
@@ -73,38 +78,65 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 fontFamily = FontFamily.SansSerif
             )
             OutlinedTextField(
-                value = usernameState.value,
-                onValueChange = { usernameState.value = it },
+                value = noPolisiState.value,
+                onValueChange = { noPolisiState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "Username") }
+                label = { Text(text = "No Polisi") }
             )
             OutlinedTextField(
                 value = emailState.value,
                 onValueChange = { emailState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "Email") }
+                label = { Text(text = "Email") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Email
+                )
             )
             OutlinedTextField(
                 value = passState.value,
                 onValueChange = { passState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Password") },
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
             OutlinedTextField(
-                value = noPolisiState.value,
-                onValueChange = { noPolisiState.value = it },
+                value = nameState.value,
+                onValueChange = { nameState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "No Polisi") },
-                visualTransformation = PasswordVisualTransformation()
+                label = { Text(text = "Nama") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                )
+            )
+            OutlinedTextField(
+                value = jenisMotorState.value,
+                onValueChange = { jenisMotorState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "Merek Motor") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Text
+                )
+            )
+            OutlinedTextField(
+                value = noHPState.value,
+                onValueChange = { noHPState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "No HP") },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                )
             )
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
                           vm.onSignup(
-                              usernameState.value.text,
+                              noPolisiState.value.text,
                               emailState.value.text,
-                              passState.value.text
+                              passState.value.text,
+                              nameState.value.text,
+                              jenisMotorState.value.text,
+                              noHPState.value.text
                           )
                 },
                 modifier = Modifier.padding(8.dp)

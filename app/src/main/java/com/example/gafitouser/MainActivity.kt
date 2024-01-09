@@ -1,14 +1,14 @@
 package com.example.gafitouser
 
-import android.os.Build
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,15 +29,23 @@ import com.example.gafitouser.frontend.ShowQrPage
 import com.example.gafitouser.frontend.auth.LoginScreen
 import com.example.gafitouser.frontend.auth.SignupScreen
 import com.example.gafitouser.main.NotificationMessage
+import com.example.gafitouser.notification.PushNotification
+import com.example.gafitouser.notification.RetrofitInstance
 import com.example.gafitouser.user.component.checkForPermission
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
+import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             GafitoUserTheme {
                 // A surface container using the 'background' color from the theme
@@ -59,9 +67,24 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC)
     }
 }
 
+
+private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+    try {
+        val response = RetrofitInstance.api.postNotification(notification)
+        if (response.isSuccessful) {
+            Log.d(TAG, "Response: ${Gson().toJson(response)}")
+        } else {
+            Log.e(TAG, response.errorBody().toString() )
+        }
+
+    } catch (e: Exception) {
+        Log.e(TAG, e.toString())
+    }
+}
 
 
 sealed class DestinationScreen(val route: String) {
@@ -75,7 +98,6 @@ sealed class DestinationScreen(val route: String) {
     object DetailLaporan: DestinationScreen("detail_laporan")
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GafitoApp() {
     val vm = hiltViewModel<GafitoViewModel>()

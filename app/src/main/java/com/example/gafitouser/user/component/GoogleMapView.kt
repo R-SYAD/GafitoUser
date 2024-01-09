@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavController
+import com.example.gafitouser.DestinationScreen
+import com.example.gafitouser.GafitoViewModel
+import com.example.gafitouser.main.navigateTo
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -57,7 +62,21 @@ fun checkForPermission(context: Context): Boolean {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    navController: NavController,
+    vm: GafitoViewModel,
+    onMarkedLocationName: (String) -> Unit,
+) {
+    val userId = vm.userData.value?.userId
+    if (userId != null) {
+        vm.getUserParkir(userId)
+    }
+    val dataParkir = vm.parkirUser
+    Log.i("GetDataPark", "Datanya nih $dataParkir")
+    var markedLatitude by remember { mutableStateOf(dataParkir?.latitude ?: "") }
+    var markedLongitude by remember { mutableStateOf(dataParkir?.longitude ?: "") }
+    var markedLocationName by remember { mutableStateOf(dataParkir?.locationName ?: "") }
+
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var isLocationLoaded by remember { mutableStateOf(false) }
@@ -67,11 +86,10 @@ fun MainScreen() {
         LocationServices.getFusedLocationProviderClient(context as ComponentActivity)
 
     // Variabel untuk menyimpan lokasi yang akan ditandai
-    var markedLatitude by remember { mutableStateOf("") }
-    var markedLongitude by remember { mutableStateOf("") }
-    var markedLocationName by remember { mutableStateOf("") }
-    var isLocationMarked by remember { mutableStateOf(false) }
-
+//    var markedLatitude = parkir?.latitude
+//    var markedLongitude = parkir?.longitude
+    var isLocationMarked by remember { mutableStateOf(dataParkir?.locationName ?: "") }
+    Log.i("Stat", "Is stat $isLocationMarked atau")
     LaunchedEffect(true) {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -153,10 +171,10 @@ fun MainScreen() {
 
             }
 
-            if (isLocationMarked) {
+            if (isLocationMarked != "") {
                 // Menampilkan latitude dan longitude yang ditandai
                 Text(
-                    text = "Location : $markedLocationName",
+                    text = markedLocationName,
                     style = typography.bodyMedium,
                     modifier = Modifier
                         .padding(top = 8.dp)
@@ -166,10 +184,9 @@ fun MainScreen() {
                 IconButton(
                     onClick = {
                         // Logika untuk menghapus lokasi yang ditandai
-                        isLocationMarked = false
-                        markedLatitude = ""
-                        markedLongitude = ""
-                        markedLocationName = ""
+                        vm.deleteMarkedLocationFromParkir(markedLatitude, markedLongitude, markedLocationName) {
+                            navigateTo(navController, DestinationScreen.ShowQR)
+                        }
                         Log.d("DeleteLocation", "Location deleted!")
                     },
                     modifier = Modifier
@@ -180,19 +197,28 @@ fun MainScreen() {
                         contentDescription = "Delete Location"
                     )
                 }
-            } else {
+            } else if (isLocationMarked == ""){
                 // Tombol "Mark Location"
                 Button(
                     onClick = {
                         // Menyimpan data latitude dan longitude yang ditandai
                         markedLatitude = currentLocation.latitude.toString()
+                        var onMarkedLocationName = "$markedLocationName"
+                        onMarkedLocationName(onMarkedLocationName)
+
                         markedLongitude = currentLocation.longitude.toString()
                         markedLocationName =
-                            getLocationName(context, currentLocation.latitude, currentLocation.longitude)
+                            getLocationName(
+                                context,
+                                markedLatitude.toDouble(),
+                                markedLongitude.toDouble()
+                            )
 
                         // Tandai bahwa lokasi sudah dimark
-                        isLocationMarked = true
-
+                        vm.markLocationInParkir(markedLatitude, markedLongitude, markedLocationName, true) {
+                            navigateTo(navController, DestinationScreen.ShowQR)
+                        }
+                        Log.i("Stat", "Is stat $isLocationMarked atau")
                         // Tambahkan logika lain jika diperlukan
                         Log.d("MarkLocation", "Location marked!")
                     },
@@ -201,17 +227,20 @@ fun MainScreen() {
                         .padding(top = 16.dp),
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                 ) {
-                    Text("Mark Location",
-                        color = colorScheme.primary)
+                    Text(
+                        "Mark Location",
+                        color = colorScheme.primary
+                    )
                 }
             }
 
             // Tombol "Find My Location"
             Button(
                 onClick = {
-                    if (isLocationLoaded && markedLatitude.isNotEmpty() && markedLongitude.isNotEmpty()) {
+                    if (isLocationLoaded && markedLatitude!!.isNotEmpty() && markedLongitude!!.isNotEmpty()) {
                         // Membuka aplikasi Google Maps dan menavigasikan ke lokasi yang ditandai
-                        val uri = "geo:$markedLatitude,$markedLongitude?q=$markedLatitude,$markedLongitude"
+                        val uri =
+                            "geo:$markedLatitude,$markedLongitude?q=$markedLatitude,$markedLongitude"
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                         context.startActivity(intent)
                     }
@@ -221,8 +250,10 @@ fun MainScreen() {
                     .padding(top = 16.dp),
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
             ) {
-                Text("Find My Location on Maps",
-                    color = colorScheme.primary)
+                Text(
+                    "Find My Location on Maps",
+                    color = colorScheme.primary
+                )
             }
 
         }
@@ -239,9 +270,12 @@ private fun getLocationName(context: Context, latitude: Double, longitude: Doubl
 
 
 @Composable
-fun GafitoLocation() {
+fun GafitoLocation(navController: NavController, vm: GafitoViewModel) {
     com.example.gafitouser.user.component.ui.theme.GafitoUserTheme {
-        MainScreen()
+        MainScreen(
+            navController = navController,
+            vm = vm,
+            onMarkedLocationName = { })
     }
 }
 
@@ -249,5 +283,4 @@ fun GafitoLocation() {
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    GafitoLocation()
 }
