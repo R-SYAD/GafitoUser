@@ -1,5 +1,6 @@
 package com.example.gafitouser.frontend
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,11 @@ import com.example.gafitouser.user.models.BottomBarItem
 @Composable
 fun LocationPage(navController: NavController, vm: GafitoViewModel) {
     // Gunakan GafitoUserTheme sebagai wrapper
+    val parkir = vm.userParkir.value
 
+    Log.i("infoPark", "Parkirnya nih data di Page : $parkir")
     GafitoUserTheme {
         val isLoading = vm.inProgress.value
-
         Scaffold(
             topBar = { TopBar(vm = vm) },
             bottomBar = { BottomBar(

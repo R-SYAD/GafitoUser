@@ -16,11 +16,13 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import java.util.UUID
 import javax.inject.Inject
@@ -50,8 +52,7 @@ class GafitoViewModel @Inject constructor(
     val parkirProgress = mutableStateOf(false)
     val parkirs = mutableStateOf<List<ParkirData>>(listOf())
     val userParkir = mutableStateOf<ParkirData?>(null)
-
-    var isLocationMarked = mutableStateOf(false)
+    val parkirUser = ParkirData()
 
     init {
 //        auth.signOut()
@@ -59,10 +60,18 @@ class GafitoViewModel @Inject constructor(
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
             getUserData(uid)
+            getUserParkir(uid)
         }
     }
 
-    fun onSignup(noPolisi: String, email: String, pass: String, name: String, jenisMotor: String, noHP: String) {
+    fun onSignup(
+        noPolisi: String,
+        email: String,
+        pass: String,
+        name: String,
+        jenisMotor: String,
+        noHP: String
+    ) {
         if (noPolisi.isEmpty() or email.isEmpty() or pass.isEmpty() or jenisMotor.isEmpty() or name.isEmpty() or noHP.isEmpty()) {
             handleException(customMessage = "Please fill in all fields")
             return
@@ -79,7 +88,12 @@ class GafitoViewModel @Inject constructor(
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 signedIn.value = true
-                                createOrUpdateProfile(noPolisi = noPolisi, jenisMotor = jenisMotor, noHP = noHP, name = name)
+                                createOrUpdateProfile(
+                                    noPolisi = noPolisi,
+                                    jenisMotor = jenisMotor,
+                                    noHP = noHP,
+                                    name = name
+                                )
                             } else {
                                 handleException(task.exception, "Sign Up Failed")
                             }
@@ -105,6 +119,7 @@ class GafitoViewModel @Inject constructor(
                         handleException(customMessage = "Login Success")
                         getUserData(uid)
                     }
+//                    userParkir
                 } else {
                     handleException(task.exception, "Login Failed")
                     inProgress.value = false
@@ -177,6 +192,28 @@ class GafitoViewModel @Inject constructor(
 
     }
 
+    fun getUserParkir(uid: String) {
+        inProgress.value = true
+        db.collection(PARKIR).whereEqualTo("userId", uid).get()
+            .addOnSuccessListener { querySnapshot ->
+                val parkir = querySnapshot.documents[0].toObject(ParkirData::class.java)
+                Log.d("GetDataPark", "isi data $parkir")
+                parkirUser.userId = parkir?.userId
+                parkirUser.latitude = parkir?.latitude
+                parkirUser.longitude = parkir?.longitude
+                parkirUser.isLocationMarked = parkir?.isLocationMarked
+                parkirUser.locationName = parkir?.locationName
+                inProgress.value = false
+                refreshLaporan()
+//                getCondition()
+                statusParkir()
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot retrieve user data")
+                inProgress.value = false
+            }
+    }
+
     fun handleException(exception: Exception? = null, customMessage: String = "") {
         exception?.printStackTrace()
         val errorMsg = exception?.localizedMessage ?: ""
@@ -196,7 +233,7 @@ class GafitoViewModel @Inject constructor(
             val result = it.metadata?.reference?.downloadUrl
             result?.addOnSuccessListener(onSuccess)
         }
-            .addOnFailureListener{exc ->
+            .addOnFailureListener { exc ->
                 handleException(exc)
                 inProgress.value = false
             }
@@ -228,7 +265,10 @@ class GafitoViewModel @Inject constructor(
         }
     }
 
-    private fun convertLaporan(documents: QuerySnapshot, outState: MutableState<List<LaporanData>>) {
+    private fun convertLaporan(
+        documents: QuerySnapshot,
+        outState: MutableState<List<LaporanData>>
+    ) {
         val newLaporans = mutableListOf<LaporanData>()
         documents.forEach { doc ->
             val laporan = doc.toObject<LaporanData>()
@@ -308,7 +348,13 @@ class GafitoViewModel @Inject constructor(
         }
     }
 
-    fun markLocationInParkir(latitude: String, longitude: String, locationName: String) {
+    fun markLocationInParkir(
+        latitude: String,
+        longitude: String,
+        locationName: String,
+        isLocationMarked: Boolean,
+        onMarkSuccess: () -> Unit
+    ) {
         val currentUid = auth.currentUser?.uid
         val currentNoPolisi = userData.value?.noPolisi
         inProgress.value = true
@@ -327,19 +373,33 @@ class GafitoViewModel @Inject constructor(
                             val data = mapOf(
                                 "latitude" to latitude,
                                 "longitude" to longitude,
-                                "locationName" to locationName
+                                "locationName" to locationName,
+                                "isLocationMarked" to isLocationMarked
                             )
 
                             db.collection(PARKIR)
                                 .document(querySnapshot.documents[0].id)
                                 .update(data)
                                 .addOnSuccessListener {
-                                    Log.d("MarkLocation", "Location marked and updated in parkir collection!")
-                                    isLocationMarked.value = true
+                                    Log.d(
+                                        "MarkLocation",
+                                        "Location marked and updated in parkir collection!"
+                                    )
+//                                    isLocationMarked.value = true
                                     inProgress.value = false
+                                    refreshParkir()
+                                    onMarkSuccess.invoke()
+                                    val currentUser = auth.currentUser
+                                    currentUser?.uid?.let { uid ->
+                                        getUserData(uid)
+                                        getUserParkir(uid)
+                                    }
                                 }
                                 .addOnFailureListener { exc ->
-                                    handleException(exc, "Failed to mark location and update parkir collection")
+                                    handleException(
+                                        exc,
+                                        "Failed to mark location and update parkir collection"
+                                    )
                                     inProgress.value = false
                                 }
                         } else {
@@ -361,7 +421,13 @@ class GafitoViewModel @Inject constructor(
         }
     }
 
-    fun deleteMarkedLocationFromParkir(latitude: String, longitude: String, locationName: String) {
+    fun deleteMarkedLocationFromParkir(
+        latitude: String,
+        longitude: String,
+        locationName: String,
+        isLocationMarked: Boolean = false,
+        onMarkSuccess: () -> Unit
+    ) {
         val currentUid = auth.currentUser?.uid
         val currentNoPolisi = userData.value?.noPolisi
         inProgress.value = true
@@ -380,19 +446,33 @@ class GafitoViewModel @Inject constructor(
                             val data = mapOf(
                                 "latitude" to null,
                                 "longitude" to null,
-                                "locationName" to null
+                                "locationName" to null,
+                                "isLocationMarked" to null
                             )
 
                             db.collection(PARKIR)
                                 .document(querySnapshot.documents[0].id)
                                 .update(data)
                                 .addOnSuccessListener {
-                                    Log.d("MarkLocation", "Location marked and updated in parkir collection!")
-                                    isLocationMarked.value = false
+                                    Log.d(
+                                        "MarkLocation",
+                                        "Location marked and updated in parkir collection!"
+                                    )
+//                                    isLocationMarked.value = false
                                     inProgress.value = false
+                                    refreshParkir()
+                                    onMarkSuccess.invoke()
+                                    val currentUser = auth.currentUser
+                                    currentUser?.uid?.let { uid ->
+                                        getUserData(uid)
+                                        getUserParkir(uid)
+                                    }
                                 }
                                 .addOnFailureListener { exc ->
-                                    handleException(exc, "Failed to mark location and update parkir collection")
+                                    handleException(
+                                        exc,
+                                        "Failed to mark location and update parkir collection"
+                                    )
                                     inProgress.value = false
                                 }
                         } else {

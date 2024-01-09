@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,7 +33,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,14 +40,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.gafitouser.DestinationScreen
 import com.example.gafitouser.GafitoViewModel
+import com.example.gafitouser.main.navigateTo
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
@@ -66,17 +65,15 @@ fun checkForPermission(context: Context): Boolean {
 fun MainScreen(
     navController: NavController,
     vm: GafitoViewModel,
-    markedLatitude: String?,
-    markedLongitude: String?,
-    markedLocationName: String?,
-    onMarkedLatitudeChange: (String) -> Unit,
-    onMarkedLongitudeChange: (String) -> Unit,
-    onMarkedLocationName: (String) -> Unit
+    onMarkedLocationName: (String) -> Unit,
 ) {
+
     var parkir = vm.userParkir.value
-    var markedLatitude by rememberSaveable { mutableStateOf(parkir?.latitude ?: "") }
-    var markedLongitude by rememberSaveable { mutableStateOf(parkir?.longitude ?: "") }
-    var markedLocationName by rememberSaveable { mutableStateOf(parkir?.locationName ?: "") }
+    val dataParkir = vm.parkirUser
+    Log.i("GetDataPark", "Datanya nih $dataParkir")
+    var markedLatitude by remember { mutableStateOf(dataParkir?.latitude ?: "") }
+    var markedLongitude by remember { mutableStateOf(dataParkir?.longitude ?: "") }
+    var markedLocationName by remember { mutableStateOf(dataParkir?.locationName ?: "") }
 
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
@@ -89,8 +86,9 @@ fun MainScreen(
     // Variabel untuk menyimpan lokasi yang akan ditandai
 //    var markedLatitude = parkir?.latitude
 //    var markedLongitude = parkir?.longitude
-    var isLocationMarked by vm.isLocationMarked
-
+    var isLocationMarked by remember { mutableStateOf(dataParkir?.locationName ?: "") }
+    Log.i("Stat", "Is stat $isLocationMarked atau")
+    Log.i("Stat", "Is stat Park $parkir atau")
     LaunchedEffect(true) {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -167,22 +165,23 @@ fun MainScreen(
                 }
 
             }
-            Text(
-                text = markedLocationName,
-                style = typography.bodyMedium,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-            )
 
-            if (isLocationMarked == true) {
+            if (isLocationMarked != "") {
                 // Menampilkan latitude dan longitude yang ditandai
+                Text(
+                    text = markedLocationName,
+                    style = typography.bodyMedium,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                )
 
                 // Tombol Hapus Lokasi
                 IconButton(
                     onClick = {
                         // Logika untuk menghapus lokasi yang ditandai
-
-                        vm.deleteMarkedLocationFromParkir(markedLatitude, markedLongitude, markedLocationName)
+                        vm.deleteMarkedLocationFromParkir(markedLatitude, markedLongitude, markedLocationName) {
+                            navigateTo(navController, DestinationScreen.ShowQR)
+                        }
                         Log.d("DeleteLocation", "Location deleted!")
                     },
                     modifier = Modifier
@@ -193,7 +192,7 @@ fun MainScreen(
                         contentDescription = "Delete Location"
                     )
                 }
-            } else if (isLocationMarked == false){
+            } else if (isLocationMarked == ""){
                 // Tombol "Mark Location"
                 Button(
                     onClick = {
@@ -211,8 +210,11 @@ fun MainScreen(
                             )
 
                         // Tandai bahwa lokasi sudah dimark
-                        vm.markLocationInParkir(markedLatitude, markedLongitude, markedLocationName)
-
+                        vm.markLocationInParkir(markedLatitude, markedLongitude, markedLocationName, true) {
+                            navigateTo(navController, DestinationScreen.ShowQR)
+                        }
+                        Toast.makeText(context,"Lokasi Berhasil Ditandai", Toast.LENGTH_SHORT).show()
+                        Log.i("Stat", "Is stat $isLocationMarked atau")
                         // Tambahkan logika lain jika diperlukan
                         Log.d("MarkLocation", "Location marked!")
                     },
@@ -265,21 +267,11 @@ private fun getLocationName(context: Context, latitude: Double, longitude: Doubl
 
 @Composable
 fun GafitoLocation(navController: NavController, vm: GafitoViewModel) {
-    val parkir = vm.userParkir.value
-    var markedLatitude by rememberSaveable { mutableStateOf(parkir?.latitude ?: "") }
-    var markedLongitude by rememberSaveable { mutableStateOf(parkir?.longitude ?: "") }
-    var markedLocationName by rememberSaveable { mutableStateOf(parkir?.locationName ?: "") }
-
     com.example.gafitouser.user.component.ui.theme.GafitoUserTheme {
         MainScreen(
             navController = navController,
             vm = vm,
-            markedLatitude = markedLatitude,
-            markedLongitude = markedLongitude,
-            markedLocationName = markedLocationName,
-            onMarkedLatitudeChange = { markedLatitude = it },
-            onMarkedLongitudeChange = { markedLongitude = it },
-            onMarkedLocationName = { markedLocationName = it })
+            onMarkedLocationName = { })
     }
 }
 

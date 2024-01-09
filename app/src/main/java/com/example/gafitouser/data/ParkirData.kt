@@ -10,5 +10,6 @@ data class ParkirData(
     var latitude: String? = null,
     var longitude: String? = null,
     var locationName: String? = null,
-    var time: Long? = null
+    var time: Long? = null,
+    var isLocationMarked: Boolean? = null
 )

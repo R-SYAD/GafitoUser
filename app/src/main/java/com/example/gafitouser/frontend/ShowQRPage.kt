@@ -1,6 +1,7 @@
 package com.example.gafitouser.frontend
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import com.example.gafitouser.user.models.BottomBarItem
 fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
     val userData = vm.userData.value
     val noPolisiDisplay = userData?.noPolisi ?: ""
+    Log.i("infoPark", "Parkirnya nih data di Page : $userData")
 
         GafitoUserTheme {
         Scaffold(

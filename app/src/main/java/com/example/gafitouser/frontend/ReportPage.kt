@@ -28,6 +28,8 @@ import com.example.gafitouser.user.component.ListLaporanView
 import com.example.gafitouser.user.component.TopBar
 import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 import com.example.gafitouser.user.models.BottomBarItem
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 //import com.example.gafitorsatpam.component.laporanComp.LaporanList
 import kotlinx.coroutines.launch
 
@@ -41,6 +43,8 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
     val laporansLoading = vm.refreshLaporanProgress.value
     val laporans = vm.laporans.value
 
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = vm.refreshLaporanProgress.value)
+
     Scaffold(
         topBar = { TopBar(vm = vm) },
         bottomBar = {
@@ -50,34 +54,38 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
             )
         },
     ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(paddingValues)
-
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { vm.refreshLaporan() }, // Trigger refresh when swiped
         ) {
-//        your code compose here
-            ListLaporanView(
-                isContextLoading = isLoading,
-                laporans = laporans,
-                laporansLoading = laporansLoading,
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(1.dp)
-                    .fillMaxSize()
-            ) { laporan ->
-                navController.currentBackStackEntry?.savedStateHandle?.set("laporan", laporan)
-                navigateTo(
-                    navController,
-                    DestinationScreen.DetailLaporan,
-                    NavParam("laporan", laporan),
-                )
+                    .padding(paddingValues)
 
-                Log.d("laporan", "Laporan yang dikirim: $laporan")
-                Log.d("laporan", "Argumen navigasi: ${navController.currentBackStackEntry?.arguments}")
-            }
-            //kalau make tampilan galeri
+            ) {
+//        your code compose here
+                ListLaporanView(
+                    isContextLoading = isLoading,
+                    laporans = laporans,
+                    laporansLoading = laporansLoading,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(1.dp)
+                        .fillMaxSize()
+                ) { laporan ->
+                    navController.currentBackStackEntry?.savedStateHandle?.set("laporan", laporan)
+                    navigateTo(
+                        navController,
+                        DestinationScreen.DetailLaporan,
+                        NavParam("laporan", laporan),
+                    )
+
+                    Log.d("laporan", "Laporan yang dikirim: $laporan")
+                    Log.d("laporan", "Argumen navigasi: ${navController.currentBackStackEntry?.arguments}")
+                }
+                //kalau make tampilan galeri
 //            LaporanList(
 //                isContextLoading = isLoading,
 //                laporansLoading = laporansLoading,
@@ -93,6 +101,7 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
 //                    NavParam("laporan", laporan)
 //                )
 //            }
+            }
         }
 
     }
