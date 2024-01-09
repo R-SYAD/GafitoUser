@@ -28,6 +28,7 @@ import javax.inject.Inject
 const val USERS = "users"
 const val LAPORAN = "laporan"
 const val PARKIR = "parkir"
+const val TOPIC = "/topics/myTopic"
 
 @HiltViewModel
 class GafitoViewModel @Inject constructor(

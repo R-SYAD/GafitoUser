@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.gafitouser"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -139,4 +139,11 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    //swipe refresh
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.6.2")
+    implementation ("com.squareup.retrofit2:converter-gson:2.6.0")
 }
