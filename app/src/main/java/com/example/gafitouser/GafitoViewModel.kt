@@ -1,6 +1,7 @@
 package com.example.gafitouser
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -8,8 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.example.gafitouser.data.Event
 import com.example.gafitouser.data.LaporanData
+import com.example.gafitouser.data.ParkirData
 import com.example.gafitouser.data.UserData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
@@ -43,6 +46,11 @@ class GafitoViewModel @Inject constructor(
     val refreshLaporanProgress = mutableStateOf(false)
     val laporans = mutableStateOf<List<LaporanData>>(listOf())
 
+    val parkirProgress = mutableStateOf(false)
+    val parkirs = mutableStateOf<List<ParkirData>>(listOf())
+    val userParkir = mutableStateOf<ParkirData?>(null)
+
+    var isLocationMarked = mutableStateOf(false)
 
     init {
 //        auth.signOut()
@@ -210,6 +218,7 @@ class GafitoViewModel @Inject constructor(
                 .addOnSuccessListener { documents ->
                     convertLaporan(documents, laporans)
                     refreshLaporanProgress.value = false
+                    sendFCMNotification("Laporan Baru", "Ada laporan baru yang perlu diperiksa.")
                 }
                 .addOnFailureListener { exc ->
                     handleException(exc, "Gagal mengambil laporan")
@@ -230,20 +239,54 @@ class GafitoViewModel @Inject constructor(
         outState.value = sortedLaporans
     }
 
-//    fun statusParkir(noPolisi: String) {
-//        val currentUid = auth.currentUser?.uid
-//        val currentNoPolisi = userData.value?.noPolisi
-//
-//        if (currentUid != null) {
-//            val userRef = db.collection(PARKIR).whereEqualTo("noPolisi", currentNoPolisi)
-//            userRef.get().addOnSuccessListener { querySnapshot ->
-//                // Jika data user ditemukan, mengubah kondisi menjadi true
-//                if (querySnapshot.size() > 0) {
-//                    isCondition.value = true
-//                }
-//            }
-//        }
-//    }
+    private fun sendFCMNotification(title: String, message: String) {
+        // Ambil instance FirebaseMessaging
+        val firebaseMessaging = FirebaseMessaging.getInstance()
+
+        // Buat data untuk pesan FCM
+        val data = mapOf(
+            "title" to title,
+            "message" to message
+        )
+
+        // Buat instance RemoteMessage
+        val remoteMessage = RemoteMessage.Builder("574694477115")
+            .setData(data)
+            .build()
+
+        // Kirim pesan FCM
+        firebaseMessaging.send(remoteMessage)
+    }
+
+
+    fun refreshParkir() {
+        val currentUid = auth.currentUser?.uid
+
+        if (currentUid != null) {
+            parkirProgress.value = true
+            db.collection(PARKIR).get()
+                .addOnSuccessListener { documents ->
+                    convertParkir(documents, parkirs)
+                    parkirProgress.value = false
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Gagal mengambil data parkir")
+                    parkirProgress.value = false
+                }
+        } else {
+            handleException(customMessage = "Error! Gagal memuat data parkir")
+        }
+    }
+
+    private fun convertParkir(documents: QuerySnapshot, outState: MutableState<List<ParkirData>>) {
+        val newParkir = mutableListOf<ParkirData>()
+        documents.forEach { doc ->
+            val parkir = doc.toObject<ParkirData>()
+            newParkir.add(parkir)
+        }
+        val sortedLaporans = newParkir.sortedByDescending { it.time }
+        outState.value = sortedLaporans
+    }
 
     fun statusParkir() {
         val currentUid = auth.currentUser?.uid
@@ -265,5 +308,113 @@ class GafitoViewModel @Inject constructor(
             handleException(customMessage = "There is Something Error")
         }
     }
+
+    fun markLocationInParkir(latitude: String, longitude: String, locationName: String) {
+        val currentUid = auth.currentUser?.uid
+        val currentNoPolisi = userData.value?.noPolisi
+        inProgress.value = true
+
+        if (currentUid != null && currentNoPolisi != null) {
+            // Pemeriksaan keberadaan parkir dengan noPolisi yang sesuai
+            val parkirRef = db.collection(PARKIR)
+                .whereEqualTo("noPolisi", currentNoPolisi)
+
+            parkirRef.get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.size() > 0) {
+                        // Jika noPolisi sesuai, simpan data parkir
+                        val parkirData = querySnapshot.documents[0].toObject<ParkirData>()
+                        if (parkirData != null && parkirData.noPolisi == currentNoPolisi) {
+                            val data = mapOf(
+                                "latitude" to latitude,
+                                "longitude" to longitude,
+                                "locationName" to locationName
+                            )
+
+                            db.collection(PARKIR)
+                                .document(querySnapshot.documents[0].id)
+                                .update(data)
+                                .addOnSuccessListener {
+                                    Log.d("MarkLocation", "Location marked and updated in parkir collection!")
+                                    isLocationMarked.value = true
+                                    inProgress.value = false
+                                }
+                                .addOnFailureListener { exc ->
+                                    handleException(exc, "Failed to mark location and update parkir collection")
+                                    inProgress.value = false
+                                }
+                        } else {
+                            handleException(customMessage = "User authentication error or noPolisi mismatch")
+                            inProgress.value = false
+                        }
+                    } else {
+                        handleException(customMessage = "No matching parkir document found for noPolisi: $currentNoPolisi")
+                        inProgress.value = false
+                    }
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Failed to query parkir collection")
+                    inProgress.value = false
+                }
+        } else {
+            handleException(customMessage = "User authentication error or noPolisi is null")
+            inProgress.value = false
+        }
+    }
+
+    fun deleteMarkedLocationFromParkir(latitude: String, longitude: String, locationName: String) {
+        val currentUid = auth.currentUser?.uid
+        val currentNoPolisi = userData.value?.noPolisi
+        inProgress.value = true
+
+        if (currentUid != null && currentNoPolisi != null) {
+            // Pemeriksaan keberadaan parkir dengan noPolisi yang sesuai
+            val parkirRef = db.collection(PARKIR)
+                .whereEqualTo("noPolisi", currentNoPolisi)
+
+            parkirRef.get()
+                .addOnSuccessListener { querySnapshot ->
+                    if (querySnapshot.size() > 0) {
+                        // Jika noPolisi sesuai, hapus data parkir yang sesuai dengan noPolisi dan UID
+                        val parkirData = querySnapshot.documents[0].toObject<ParkirData>()
+                        if (parkirData != null && parkirData.noPolisi == currentNoPolisi) {
+                            val data = mapOf(
+                                "latitude" to null,
+                                "longitude" to null,
+                                "locationName" to null
+                            )
+
+                            db.collection(PARKIR)
+                                .document(querySnapshot.documents[0].id)
+                                .update(data)
+                                .addOnSuccessListener {
+                                    Log.d("MarkLocation", "Location marked and updated in parkir collection!")
+                                    isLocationMarked.value = false
+                                    inProgress.value = false
+                                }
+                                .addOnFailureListener { exc ->
+                                    handleException(exc, "Failed to mark location and update parkir collection")
+                                    inProgress.value = false
+                                }
+                        } else {
+                            handleException(customMessage = "User authentication error or noPolisi mismatch")
+                            inProgress.value = false
+                        }
+                    } else {
+                        handleException(customMessage = "No matching parkir document found for noPolisi: $currentNoPolisi")
+                        inProgress.value = false
+                    }
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Failed to query parkir collection")
+                    inProgress.value = false
+                }
+        } else {
+            handleException(customMessage = "User authentication error or noPolisi is null")
+            inProgress.value = false
+        }
+    }
+
+
 
 }

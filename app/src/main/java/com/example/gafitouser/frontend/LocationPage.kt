@@ -43,7 +43,7 @@ fun LocationPage(navController: NavController, vm: GafitoViewModel) {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.primary)
             ) {
-                GafitoLocation()
+                GafitoLocation(navController, vm)
             }
         }
     }
