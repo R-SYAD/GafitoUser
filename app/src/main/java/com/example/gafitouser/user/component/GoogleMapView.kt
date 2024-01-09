@@ -67,8 +67,10 @@ fun MainScreen(
     vm: GafitoViewModel,
     onMarkedLocationName: (String) -> Unit,
 ) {
-
-    var parkir = vm.userParkir.value
+    val userId = vm.userData.value?.userId
+    if (userId != null) {
+        vm.getUserParkir(userId)
+    }
     val dataParkir = vm.parkirUser
     Log.i("GetDataPark", "Datanya nih $dataParkir")
     var markedLatitude by remember { mutableStateOf(dataParkir?.latitude ?: "") }
@@ -88,7 +90,6 @@ fun MainScreen(
 //    var markedLongitude = parkir?.longitude
     var isLocationMarked by remember { mutableStateOf(dataParkir?.locationName ?: "") }
     Log.i("Stat", "Is stat $isLocationMarked atau")
-    Log.i("Stat", "Is stat Park $parkir atau")
     LaunchedEffect(true) {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -213,7 +214,6 @@ fun MainScreen(
                         vm.markLocationInParkir(markedLatitude, markedLongitude, markedLocationName, true) {
                             navigateTo(navController, DestinationScreen.ShowQR)
                         }
-                        Toast.makeText(context,"Lokasi Berhasil Ditandai", Toast.LENGTH_SHORT).show()
                         Log.i("Stat", "Is stat $isLocationMarked atau")
                         // Tambahkan logika lain jika diperlukan
                         Log.d("MarkLocation", "Location marked!")

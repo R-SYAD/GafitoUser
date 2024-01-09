@@ -2,8 +2,10 @@ package com.example.gafitouser
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -23,7 +25,6 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import java.util.UUID
 import javax.inject.Inject
 
@@ -60,7 +61,8 @@ class GafitoViewModel @Inject constructor(
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
             getUserData(uid)
-            getUserParkir(uid)
+//            getUserParkir(uid)
+
         }
     }
 
@@ -218,6 +220,11 @@ class GafitoViewModel @Inject constructor(
         exception?.printStackTrace()
         val errorMsg = exception?.localizedMessage ?: ""
         val message = if (customMessage.isEmpty()) errorMsg else "$customMessage: $errorMsg"
+        popupNotification.value = Event(message)
+    }
+
+    fun handleSuccess(customMessage: String = "") {
+        val message =  "$customMessage"
         popupNotification.value = Event(message)
     }
 
@@ -385,6 +392,7 @@ class GafitoViewModel @Inject constructor(
                                         "MarkLocation",
                                         "Location marked and updated in parkir collection!"
                                     )
+                                    handleSuccess(customMessage = "Lokasi Berhasil Ditandai")
 //                                    isLocationMarked.value = true
                                     inProgress.value = false
                                     refreshParkir()
@@ -459,6 +467,7 @@ class GafitoViewModel @Inject constructor(
                                         "Location marked and updated in parkir collection!"
                                     )
 //                                    isLocationMarked.value = false
+                                    handleSuccess(customMessage = "Tanda Lokasi Berhasil Dihapus")
                                     inProgress.value = false
                                     refreshParkir()
                                     onMarkSuccess.invoke()
