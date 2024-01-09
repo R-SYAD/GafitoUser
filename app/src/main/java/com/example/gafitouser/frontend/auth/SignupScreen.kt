@@ -95,19 +95,19 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
             )
             OutlinedTextField(
                 value = nameState.value,
-                onValueChange = { passState.value = it },
+                onValueChange = { nameState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Nama") },
             )
             OutlinedTextField(
                 value = jenisMotorState.value,
-                onValueChange = { passState.value = it },
+                onValueChange = { jenisMotorState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "Merek Motor") },
             )
             OutlinedTextField(
                 value = noHPState.value,
-                onValueChange = { passState.value = it },
+                onValueChange = { noHPState.value = it },
                 modifier = Modifier.padding(8.dp),
                 label = { Text(text = "No HP") },
             )

@@ -78,7 +78,7 @@ class GafitoViewModel @Inject constructor(
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 signedIn.value = true
-                                createOrUpdateProfile(noPolisi = noPolisi)
+                                createOrUpdateProfile(noPolisi = noPolisi, jenisMotor = jenisMotor, noHP = noHP, name = name)
                             } else {
                                 handleException(task.exception, "Sign Up Failed")
                             }

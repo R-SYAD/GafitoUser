@@ -48,7 +48,7 @@ fun PhotoProfile(imageUrl: String?, onClick: () -> Unit) {
 fun DetailProfil(navController: NavController, vm: GafitoViewModel) {
     val userData = vm.userData.value
 
-    val noPolisiDisplay = if (userData?.noPolisi == null) "" else "@${userData.noPolisi}"
+    val noPolisiDisplay = if (userData?.noPolisi == null) "" else "${userData.noPolisi}"
     val nameDisplay = userData?.name ?: ""
     val jenisMotorDisplay = userData?.jenisMotor ?: ""
     val noHpDisplay = userData?.noHP ?: ""
