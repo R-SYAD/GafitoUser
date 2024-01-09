@@ -53,9 +53,12 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
             ),
             horizontalAlignment = Alignment.CenterHorizontally
             ) {
-            val usernameState = remember { mutableStateOf(TextFieldValue()) }
+            val noPolisiState = remember { mutableStateOf(TextFieldValue()) }
             val emailState = remember { mutableStateOf(TextFieldValue()) }
             val passState = remember { mutableStateOf(TextFieldValue()) }
+            val jenisMotorState = remember { mutableStateOf(TextFieldValue()) }
+            val nameState = remember { mutableStateOf(TextFieldValue()) }
+            val noHPState = remember { mutableStateOf(TextFieldValue()) }
 
             Image(
                 painter = painterResource(id = R.drawable.gafito),
@@ -72,10 +75,10 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 fontFamily = FontFamily.SansSerif
             )
             OutlinedTextField(
-                value = usernameState.value,
-                onValueChange = { usernameState.value = it },
+                value = noPolisiState.value,
+                onValueChange = { noPolisiState.value = it },
                 modifier = Modifier.padding(8.dp),
-                label = { Text(text = "Username") }
+                label = { Text(text = "No Polisi") }
             )
             OutlinedTextField(
                 value = emailState.value,
@@ -90,13 +93,34 @@ fun SignupScreen(navController: NavController, vm: GafitoViewModel) {
                 label = { Text(text = "Password") },
                 visualTransformation = PasswordVisualTransformation()
             )
+            OutlinedTextField(
+                value = nameState.value,
+                onValueChange = { passState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "Nama") },
+            )
+            OutlinedTextField(
+                value = jenisMotorState.value,
+                onValueChange = { passState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "Merek Motor") },
+            )
+            OutlinedTextField(
+                value = noHPState.value,
+                onValueChange = { passState.value = it },
+                modifier = Modifier.padding(8.dp),
+                label = { Text(text = "No HP") },
+            )
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
                           vm.onSignup(
-                              usernameState.value.text,
+                              noPolisiState.value.text,
                               emailState.value.text,
-                              passState.value.text
+                              passState.value.text,
+                              nameState.value.text,
+                              jenisMotorState.value.text,
+                              noHPState.value.text
                           )
                 },
                 modifier = Modifier.padding(8.dp)

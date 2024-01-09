@@ -61,24 +61,24 @@ class GafitoViewModel @Inject constructor(
         }
     }
 
-    fun onSignup(username: String, email: String, pass: String) {
-        if (username.isEmpty() or email.isEmpty() or pass.isEmpty()) {
+    fun onSignup(noPolisi: String, email: String, pass: String, name: String, jenisMotor: String, noHP: String) {
+        if (noPolisi.isEmpty() or email.isEmpty() or pass.isEmpty() or jenisMotor.isEmpty() or name.isEmpty() or noHP.isEmpty()) {
             handleException(customMessage = "Please fill in all fields")
             return
         }
         inProgress.value = true
 
-        db.collection(USERS).whereEqualTo("username", username).get()
+        db.collection(USERS).whereEqualTo("noPolisi", noPolisi).get()
             .addOnSuccessListener { documents ->
                 if (documents.size() > 0) {
-                    handleException(customMessage = "Username already exists")
+                    handleException(customMessage = "No Polisi already exists")
                     inProgress.value = false
                 } else {
                     auth.createUserWithEmailAndPassword(email, pass)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 signedIn.value = true
-                                createOrUpdateProfile(username = username)
+                                createOrUpdateProfile(noPolisi = noPolisi)
                             } else {
                                 handleException(task.exception, "Sign Up Failed")
                             }
@@ -117,7 +117,6 @@ class GafitoViewModel @Inject constructor(
 
     private fun createOrUpdateProfile(
         name: String? = null,
-        username: String? = null,
         imageUrl: String? = null,
         noPolisi: String? = null,
         jenisMotor: String? = null,
@@ -127,7 +126,6 @@ class GafitoViewModel @Inject constructor(
         val userData = UserData(
             userId = uid,
             name = name ?: userData.value?.name,
-            username = username ?: userData.value?.username,
             imageUrl = imageUrl ?: userData.value?.imageUrl,
             noPolisi = noPolisi ?: userData.value?.noPolisi,
             jenisMotor = jenisMotor ?: userData.value?.jenisMotor,
@@ -415,6 +413,12 @@ class GafitoViewModel @Inject constructor(
         }
     }
 
-
+    fun onLogout() {
+        auth.signOut()
+        signedIn.value = false
+        userData.value = null
+        userParkir.value = null
+        popupNotification.value = Event("Logged Out")
+    }
 
 }
