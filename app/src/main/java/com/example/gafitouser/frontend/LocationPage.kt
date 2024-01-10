@@ -26,7 +26,7 @@ import com.example.gafitouser.user.models.BottomBarItem
 fun LocationPage(navController: NavController, vm: GafitoViewModel) {
     // Gunakan GafitoUserTheme sebagai wrapper
     val parkir = vm.userParkir.value
-
+//    vm.statusParkir()
     Log.i("infoPark", "Parkirnya nih data di Page : $parkir")
     GafitoUserTheme {
         val isLoading = vm.inProgress.value

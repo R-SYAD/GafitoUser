@@ -24,6 +24,7 @@ import com.example.gafitouser.user.component.ui.theme.GafitoUserTheme
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun DetailLaporanScreen(navController: NavController, vm: GafitoViewModel, laporan: LaporanData) {
+
     Scaffold(
         topBar = {TopBarAtas("Detail Laporan", navController)}
     ) {

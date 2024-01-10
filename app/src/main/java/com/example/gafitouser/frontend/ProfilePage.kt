@@ -25,7 +25,7 @@ import com.example.gafitouser.user.models.BottomBarItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfilePage(navController: NavController, vm: GafitoViewModel) {
-
+    vm.statusParkir()
     val isLoading = vm.inProgress.value
 
     Scaffold(

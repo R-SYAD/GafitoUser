@@ -44,7 +44,7 @@ fun ReportPage(navController: NavController, vm: GafitoViewModel) {
     val laporans = vm.laporans.value
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = vm.refreshLaporanProgress.value)
-
+    vm.statusParkir()
     Scaffold(
         topBar = { TopBar(vm = vm) },
         bottomBar = {

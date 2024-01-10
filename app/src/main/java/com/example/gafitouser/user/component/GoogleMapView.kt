@@ -67,8 +67,10 @@ fun MainScreen(
     vm: GafitoViewModel,
     onMarkedLocationName: (String) -> Unit,
 ) {
+    vm.statusParkir()
     val userId = vm.userData.value?.userId
-    if (userId != null) {
+    val condition by vm.isCondition
+    if (userId != null && condition == true) {
         vm.getUserParkir(userId)
     }
     val dataParkir = vm.parkirUser

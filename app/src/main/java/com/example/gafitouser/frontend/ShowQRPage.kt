@@ -36,6 +36,7 @@ import com.example.gafitouser.user.models.BottomBarItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowQrPage(navController: NavController, vm: GafitoViewModel) {
+    vm.statusParkir()
     val userData = vm.userData.value
     val noPolisiDisplay = userData?.noPolisi ?: ""
     Log.i("infoPark", "Parkirnya nih data di Page : $userData")
